@@ -27,8 +27,6 @@
         <h3 class="text-sm font-semibold uppercase tracking-[0.16em] text-white/50">Reach us</h3>
         <ul class="mt-5 space-y-3 text-[15px] text-white/80">
           <li><a href="mailto:admin@peechbuilder.com" class="hover:text-orange-400">admin@peechbuilder.com</a></li>
-          <li><a href="tel:+919779538704" class="hover:text-orange-400">+91 97795 38704</a></li>
-          <li class="leading-6 text-white/65">8057FF, Sector 125, Sunny Enclave,<br>Kharar (Rupnagar), Punjab 140301, India</li>
         </ul>
       </div>
     </div>
