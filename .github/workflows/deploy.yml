@@ -1,0 +1,58 @@
+name: Deploy static site
+
+on:
+  push:
+    branches:
+      - prod-*
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: static-site-deploy
+  cancel-in-progress: true
+
+env:
+  S3_TARGET: s3://kive-media/peechbuilder-website/
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate static site
+        run: npm run generate
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload site to S3
+        run: |
+          # Assets: let the CLI infer types, but don't touch HTML here
+          aws s3 sync .output/public/ "$S3_TARGET" --delete --exclude "*.html"
+          # HTML: always re-upload with an explicit content type so browsers render instead of download
+          aws s3 cp .output/public/ "$S3_TARGET" --recursive \
+            --exclude "*" --include "*.html" \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "no-cache"
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths '/*'
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
