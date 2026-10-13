@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     resendApiKey: '',
     contactFrom: 'Peechbuilder Website <no-reply@peechbuilder.com>',
     contactTo: 'admin@peechbuilder.com,bhullarji621@gmail.com',
+    public: {
+      // Contact form target. Production builds set NUXT_PUBLIC_CONTACT_ENDPOINT to the Lambda Function URL.
+      contactEndpoint: '/api/contact',
+    },
   },
 
   app: {

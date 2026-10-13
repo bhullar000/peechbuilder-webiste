@@ -67,6 +67,7 @@ const form = reactive(blank())
 const status = ref<'idle' | 'sending' | 'sent'>('idle')
 const error = ref('')
 const sentName = ref('')
+const { contactEndpoint } = useRuntimeConfig().public
 
 async function submit() {
   error.value = ''
@@ -81,7 +82,7 @@ async function submit() {
 
   status.value = 'sending'
   try {
-    await $fetch('/api/contact', { method: 'POST', body: { ...form } })
+    await $fetch(contactEndpoint, { method: 'POST', body: { ...form } })
     sentName.value = form.name.trim().split(' ')[0]!
     status.value = 'sent'
   } catch (e: any) {
