@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  S3_TARGET: s3://kive-media/peechbuilder-website/
+  S3_TARGET: s3://kive-media/peechbuilder-com/
 
 jobs:
   deploy:
